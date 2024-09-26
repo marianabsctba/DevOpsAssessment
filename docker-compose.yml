@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  eureka-server:
+    build: ./EurekaServer
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - infnet_network
+
+  veiculo-service:
+    build: ./Q02
+    container_name: veiculo-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_SERVER_URI=http://eureka-server:8761/eureka
+    networks:
+      - infnet_network
+
+networks:
+  infnet_network:
+    driver: bridge

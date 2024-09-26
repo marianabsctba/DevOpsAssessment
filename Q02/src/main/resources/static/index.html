@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Veículos</title>
+    <!-- Incluindo o Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Função para exibir erros de validação
+            function displayErrors(errors) {
+                let errorMessages = "";
+                for (const field in errors) {
+                    errorMessages += `<li>${field}: ${errors[field]}</li>`;
+                }
+                M.toast({html: `<ul>${errorMessages}</ul>`});
+            }
+
+            // Função para listar todos os veículos
+            function fetchVehicles() {
+                $.ajax({
+                    url: '/veiculos',
+                    type: 'GET',
+                    success: function(veiculos) {
+                        var tbodyEl = $('tbody');
+                        tbodyEl.html('');  // Limpar tabela
+                        veiculos.forEach(function(veiculo) {
+                            tbodyEl.append(`
+                                <tr>
+                                    <td>${veiculo.id}</td>
+                                    <td>${veiculo.placa}</td>
+                                    <td>${veiculo.marca}</td>
+                                    <td>${veiculo.modelo}</td>
+                                    <td>${veiculo.ano}</td>
+                                    <td><button class="btn update-button" data-id="${veiculo.id}">Atualizar</button></td>
+                                    <td><button class="btn red delete-button" data-id="${veiculo.id}">Excluir</button></td>
+                                </tr>
+                            `);
+                        });
+                    }
+                });
+            }
+
+            // Função para salvar um novo veículo
+            function saveVehicle(veiculo) {
+                $.ajax({
+                    url: '/veiculos',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(veiculo),
+                    success: function() {
+                        fetchVehicles();  // Recarregar lista após adicionar
+                        M.toast({html: 'Veículo adicionado com sucesso!'});
+                    },
+                    error: function(jqXHR) {
+                        if (jqXHR.status === 400) {
+                            const errors = jqXHR.responseJSON;
+                            displayErrors(errors);
+                        } else {
+                            M.toast({html: 'Erro ao adicionar o veículo.'});
+                        }
+                    }
+                });
+            }
+
+            function updateVehicle(id, veiculo) {
+                $.ajax({
+                    url: `/veiculos/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(veiculo),
+                    success: function() {
+                        fetchVehicles();
+                        M.toast({html: 'Veículo atualizado com sucesso!'});
+                    },
+                    error: function() {
+                        M.toast({html: 'Erro ao atualizar o veículo.'});
+                    }
+                });
+            }
+
+            // Função para excluir um veículo
+            function deleteVehicle(id) {
+                $.ajax({
+                    url: `/veiculos/${id}`,  // Usando o ID do veículo na URL
+                    type: 'DELETE',
+                    success: function() {
+                        fetchVehicles();  // Recarregar lista após exclusão
+                        M.toast({html: 'Veículo excluído com sucesso!'});
+                    },
+                    error: function() {
+                        M.toast({html: 'Erro ao excluir o veículo.'});
+                    }
+                });
+            }
+
+            // Ao carregar a página, buscar e exibir todos os veículos
+            fetchVehicles();
+
+            // Handler para salvar novo veículo
+            $('#save-btn').click(function() {
+                var veiculo = {
+                    placa: $('#placa').val(),
+                    marca: $('#marca').val(),
+                    modelo: $('#modelo').val(),
+                    ano: $('#ano').val()
+                };
+                saveVehicle(veiculo);
+            });
+
+            // Handler para atualizar veículo (ao clicar no botão atualizar)
+            $('table').on('click', '.update-button', function() {
+                var id = $(this).data('id');
+                var veiculo = {
+                    placa: prompt("Nova placa:"),
+                    marca: prompt("Nova marca:"),
+                    modelo: prompt("Novo modelo:"),
+                    ano: prompt("Novo ano:")
+                };
+                updateVehicle(id, veiculo);
+            });
+
+            // Handler para excluir veículo (ao clicar no botão excluir)
+            $('table').on('click', '.delete-button', function() {
+                var id = $(this).data('id');
+                if (confirm("Deseja realmente excluir este veículo?")) {
+                    deleteVehicle(id);  // Chamar a função de exclusão
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h3 class="center-align">Gerenciador de Veículos</h3>
+
+    <!-- Formulário para adicionar veículo -->
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Adicionar Novo Veículo</span>
+                    <div class="input-field">
+                        <input type="text" id="placa">
+                        <label for="placa">Placa</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="marca">
+                        <label for="marca">Marca</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="modelo">
+                        <label for="modelo">Modelo</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="number" id="ano">
+                        <label for="ano">Ano</label>
+                    </div>
+                    <button id="save-btn" class="btn waves-effect waves-light">Salvar Veículo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de veículos -->
+    <div class="row">
+        <div class="col s12">
+            <table class="striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Placa</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Ano</th>
+                    <th>Atualizar</th>
+                    <th>Excluir</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Os veículos serão carregados aqui dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
