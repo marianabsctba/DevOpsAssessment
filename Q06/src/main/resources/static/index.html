@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Estudantes de Hogwarts</title>
+
+    <!-- Import Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-image: url('https://cdn.pixabay.com/photo/2017/07/25/13/32/castle-2533641_960_720.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1, h2 {
+            color: #ffd700; /* Dourado, cor de Hogwarts */
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+
+        label {
+            color: #fff;
+        }
+
+        table {
+            color: #fff;
+        }
+
+        thead {
+            background-color: #4a148c; /* Roxo escuro para o tema Hogwarts */
+        }
+
+        tbody tr {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            background-color: #4a148c; /* Botão roxo inspirado em Hogwarts */
+        }
+
+        .btn:hover {
+            background-color: #6a1b9a; /* Efeito hover */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="center-align">Cadastro de Estudantes de Hogwarts</h1>
+
+    <div class="row">
+        <h2>Adicionar Novo Estudante</h2>
+        <div class="input-field col s12">
+            <input id="nome" type="text" class="validate">
+            <label for="nome">Nome</label>
+        </div>
+
+        <div class="input-field col s12">
+            <select id="casa" class="browser-default">
+                <option value="GRIFINORIA">Grifinória</option>
+                <option value="SONSERINA">Sonserina</option>
+                <option value="LUFA_LUFA">Lufa-Lufa</option>
+                <option value="CORVINAL">Corvinal</option>
+            </select>
+        </div>
+
+        <button id="adicionarEstudante" class="btn waves-effect waves-light">
+            Adicionar Estudante
+            <i class="material-icons right">send</i>
+        </button>
+    </div>
+
+    <div class="row">
+        <h2>Atualizar Estudante</h2>
+        <div class="input-field col s12">
+            <input id="update-id" type="number" class="validate" placeholder="ID do Estudante">
+        </div>
+        <div class="input-field col s12">
+            <input id="update-nome" type="text" class="validate" placeholder="Novo Nome">
+        </div>
+        <div class="input-field col s12">
+            <select id="update-casa" class="browser-default">
+                <option value="GRIFINORIA">Grifinória</option>
+                <option value="SONSERINA">Sonserina</option>
+                <option value="LUFA_LUFA">Lufa-Lufa</option>
+                <option value="CORVINAL">Corvinal</option>
+            </select>
+        </div>
+        <button id="atualizarEstudante" class="btn waves-effect waves-light">
+            Atualizar Estudante
+            <i class="material-icons right">update</i>
+        </button>
+    </div>
+
+    <div class="row">
+        <h2>Lista de Estudantes</h2>
+        <table class="highlight centered responsive-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Casa</th>
+                <th>Ação</th>
+            </tr>
+            </thead>
+            <tbody id="tabelaEstudantes">
+            <!-- Estudantes serão listados aqui -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Import jQuery and Materialize JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Função para buscar e exibir todos os estudantes
+        function buscarEstudantes() {
+            $.ajax({
+                url: '/estudantes',
+                type: 'GET',
+                success: function (estudantes) {
+                    var tabelaEstudantes = $('#tabelaEstudantes');
+                    tabelaEstudantes.html(''); // Limpa a tabela antes de preencher
+
+                    estudantes.forEach(function (estudante) {
+                        tabelaEstudantes.append(`
+                            <tr>
+                                <td>${estudante.id}</td>
+                                <td>${estudante.nome}</td>
+                                <td>${estudante.casa}</td>
+                                <td>
+                                    <button class="btn red darken-2 delete-button" data-id="${estudante.id}">
+                                        Excluir
+                                        <i class="material-icons right">delete</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function() {
+                    M.toast({html: 'Erro ao carregar estudantes', classes: 'rounded'});
+                }
+            });
+        }
+
+        // Chama a função para exibir os estudantes ao carregar a página
+        buscarEstudantes();
+
+        // Função para adicionar um novo estudante
+        $('#adicionarEstudante').click(function () {
+            var nome = $('#nome').val();
+            var casa = $('#casa').val();
+
+            if (nome && casa) {
+                var novoEstudante = {
+                    nome: nome,
+                    casa: casa
+                };
+
+                $.ajax({
+                    url: '/estudantes',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(novoEstudante),
+                    success: function () {
+                        M.toast({html: 'Estudante adicionado com sucesso!', classes: 'rounded'}); // Mensagem de sucesso
+                        $('#nome').val('');  // Limpa o campo nome
+                        $('#casa').val('GRIFINORIA');  // Reseta a seleção da casa
+                        buscarEstudantes();  // Atualiza a tabela de estudantes
+                    },
+                    error: function () {
+                        M.toast({html: 'Erro ao adicionar estudante.', classes: 'rounded'}); // Mensagem de erro
+                    }
+                });
+            } else {
+                M.toast({html: 'Preencha todos os campos.', classes: 'rounded'});
+            }
+        });
+
+        // Função para atualizar um estudante
+        $('#atualizarEstudante').click(function () {
+            var id = $('#update-id').val();
+            var nome = $('#update-nome').val();
+            var casa = $('#update-casa').val();
+
+            if (id && nome && casa) {
+                var estudanteAtualizado = {
+                    nome: nome,
+                    casa: casa
+                };
+
+                $.ajax({
+                    url: `/estudantes/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(estudanteAtualizado),
+                    success: function () {
+                        M.toast({html: 'Estudante atualizado com sucesso!', classes: 'rounded'});
+                        $('#update-id').val('');  // Limpa o campo ID
+                        $('#update-nome').val('');  // Limpa o campo nome
+                        $('#update-casa').val('GRIFINORIA');  // Reseta a seleção da casa
+                        buscarEstudantes();  // Atualiza a tabela de estudantes
+                    },
+                    error: function () {
+                        M.toast({html: 'Erro ao atualizar estudante.', classes: 'rounded'});
+                    }
+                });
+            } else {
+                M.toast({html: 'Preencha todos os campos.', classes: 'rounded'});
+            }
+        });
+
+        // Função para excluir um estudante
+        $('body').on('click', '.delete-button', function () {
+            var id = $(this).data('id');
+
+            if (confirm("Deseja realmente excluir este estudante?")) {
+                $.ajax({
+                    url: `/estudantes/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        M.toast({html: 'Estudante excluído com sucesso!', classes: 'rounded'});
+                        buscarEstudantes();  // Atualiza a tabela de estudantes
+                    },
+                    error: function () {
+                        M.toast({html: 'Erro ao excluir estudante.', classes: 'rounded'});
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
