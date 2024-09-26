@@ -25,8 +25,8 @@
         }
 
         .container {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
             border-radius: 10px;
             margin-top: 50px;
         }
@@ -84,28 +84,6 @@
     </div>
 
     <div class="row">
-        <h2>Atualizar Estudante</h2>
-        <div class="input-field col s12">
-            <input id="update-id" type="number" class="validate" placeholder="ID do Estudante">
-        </div>
-        <div class="input-field col s12">
-            <input id="update-nome" type="text" class="validate" placeholder="Novo Nome">
-        </div>
-        <div class="input-field col s12">
-            <select id="update-casa" class="browser-default">
-                <option value="GRIFINORIA">Grifinória</option>
-                <option value="SONSERINA">Sonserina</option>
-                <option value="LUFA_LUFA">Lufa-Lufa</option>
-                <option value="CORVINAL">Corvinal</option>
-            </select>
-        </div>
-        <button id="atualizarEstudante" class="btn waves-effect waves-light">
-            Atualizar Estudante
-            <i class="material-icons right">update</i>
-        </button>
-    </div>
-
-    <div class="row">
         <h2>Lista de Estudantes</h2>
         <table class="highlight centered responsive-table">
             <thead>
@@ -145,6 +123,10 @@
                                 <td>${estudante.nome}</td>
                                 <td>${estudante.casa}</td>
                                 <td>
+                                    <button class="btn blue darken-2 update-button" data-id="${estudante.id}" data-nome="${estudante.nome}" data-casa="${estudante.casa}">
+                                        Atualizar
+                                        <i class="material-icons right">edit</i>
+                                    </button>
                                     <button class="btn red darken-2 delete-button" data-id="${estudante.id}">
                                         Excluir
                                         <i class="material-icons right">delete</i>
@@ -194,16 +176,19 @@
             }
         });
 
-        // Função para atualizar um estudante
-        $('#atualizarEstudante').click(function () {
-            var id = $('#update-id').val();
-            var nome = $('#update-nome').val();
-            var casa = $('#update-casa').val();
+        // Função para abrir modal e atualizar o estudante
+        $('body').on('click', '.update-button', function () {
+            var id = $(this).data('id');
+            var nome = $(this).data('nome');
+            var casa = $(this).data('casa');
 
-            if (id && nome && casa) {
+            var novoNome = prompt("Atualizar nome:", nome);
+            var novaCasa = prompt("Atualizar casa (GRIFINORIA, SONSERINA, LUFA_LUFA, CORVINAL):", casa);
+
+            if (novoNome && novaCasa) {
                 var estudanteAtualizado = {
-                    nome: nome,
-                    casa: casa
+                    nome: novoNome,
+                    casa: novaCasa.toUpperCase()  // Normaliza o valor da casa para maiúsculas
                 };
 
                 $.ajax({
@@ -213,17 +198,12 @@
                     data: JSON.stringify(estudanteAtualizado),
                     success: function () {
                         M.toast({html: 'Estudante atualizado com sucesso!', classes: 'rounded'});
-                        $('#update-id').val('');  // Limpa o campo ID
-                        $('#update-nome').val('');  // Limpa o campo nome
-                        $('#update-casa').val('GRIFINORIA');  // Reseta a seleção da casa
                         buscarEstudantes();  // Atualiza a tabela de estudantes
                     },
                     error: function () {
                         M.toast({html: 'Erro ao atualizar estudante.', classes: 'rounded'});
                     }
                 });
-            } else {
-                M.toast({html: 'Preencha todos os campos.', classes: 'rounded'});
             }
         });
 
