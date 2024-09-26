@@ -1,5 +1,6 @@
-package edu.br.infnet.q06.model;
+package edu.br.infnet.hogwarts.model;
 
+import edu.br.infnet.q06.util.Casa;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +12,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table("aluno")
-public class Aluno {
+@Table("estudante")
+public class Estudante {
     @Id
     private Long id;
     private String nome;
-    private String curso;
+    private Casa casa;
 }
