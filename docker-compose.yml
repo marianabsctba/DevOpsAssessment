@@ -4,7 +4,7 @@ services:
     build: ./EurekaServer
     container_name: eureka-server
     ports:
-      - "8761:8761"
+      - "8762:8761"  # Alterando para usar a porta 8762 no host
     networks:
       - infnet_network
 
@@ -16,7 +16,7 @@ services:
     depends_on:
       - eureka-server
     environment:
-      - EUREKA_SERVER_URI=http://eureka-server:8761/eureka
+      - EUREKA_SERVER_URI=http://eureka-server:8762/eureka  # Atualizando o URI com a nova porta
     networks:
       - infnet_network
 
