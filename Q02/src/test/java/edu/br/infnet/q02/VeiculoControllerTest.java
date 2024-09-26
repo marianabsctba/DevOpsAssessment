@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,8 +39,8 @@ public class VeiculoControllerTest {
     @Test
     public void listarVeiculos_DeveRetornarListaDeVeiculos() throws Exception {
         List<Veiculo> veiculos = List.of(
-                new Veiculo(1L, "Corolla", "Toyota", "Sedan", 2020),
-                new Veiculo(2L, "Civic", "Honda", "Sedan", 2021)
+                new Veiculo(1L, "ABC1234", "Toyota", "Corolla", 2020),
+                new Veiculo(2L, "DEF5678", "Honda", "Civic", 2021)
         );
 
         when(veiculoService.listarVeiculos()).thenReturn(veiculos);
@@ -48,19 +49,21 @@ public class VeiculoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].nome").value("Corolla"))
-                .andExpect(jsonPath("$[1].nome").value("Civic"));
+                .andExpect(jsonPath("$[0].placa").value("ABC1234"))
+                .andExpect(jsonPath("$[0].marca").value("Toyota"))
+                .andExpect(jsonPath("$[1].placa").value("DEF5678"))
+                .andExpect(jsonPath("$[1].marca").value("Honda"));
     }
 
     @Test
     public void buscarVeiculoPorId_DeveRetornarVeiculo_QuandoIdExiste() throws Exception {
-        Veiculo veiculo = new Veiculo(1L, "Corolla", "Toyota", "Sedan", 2020);
+        Veiculo veiculo = new Veiculo(1L, "ABC1234", "Toyota", "Corolla", 2020);
 
         when(veiculoService.buscarVeiculoPorId(1L)).thenReturn(Optional.of(veiculo));
 
         mockMvc.perform(get("/veiculos/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Corolla"))
+                .andExpect(jsonPath("$.placa").value("ABC1234"))
                 .andExpect(jsonPath("$.marca").value("Toyota"));
     }
 
@@ -74,7 +77,7 @@ public class VeiculoControllerTest {
 
     @Test
     public void salvarVeiculo_DeveSalvarVeiculo() throws Exception {
-        Veiculo veiculo = new Veiculo(1L, "Corolla", "Toyota", "Sedan", 2020);
+        Veiculo veiculo = new Veiculo(1L, "ABC1234", "Toyota", "Corolla", 2020);
 
         when(veiculoService.salvarVeiculo(any(Veiculo.class))).thenReturn(veiculo);
 
@@ -82,13 +85,13 @@ public class VeiculoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(veiculo)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nome").value("Corolla"))
+                .andExpect(jsonPath("$.placa").value("ABC1234"))
                 .andExpect(jsonPath("$.marca").value("Toyota"));
     }
 
     @Test
     public void atualizarVeiculo_DeveAtualizarVeiculo() throws Exception {
-        Veiculo veiculoAtualizado = new Veiculo(1L, "Corolla", "Toyota", "Sedan", 2021);
+        Veiculo veiculoAtualizado = new Veiculo(1L, "ABC1234", "Toyota", "Corolla", 2021);
 
         when(veiculoService.atualizarVeiculo(eq(1L), any(Veiculo.class))).thenReturn(veiculoAtualizado);
 
