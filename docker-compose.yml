@@ -20,6 +20,18 @@ services:
     networks:
       - infnet_network
 
+  questao07-service:  # Novo serviço adicionado
+    build: ./Q07
+    container_name: questao07-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_SERVER_URI=http://eureka-server:8762/eureka
+    networks:
+      - infnet_network
+
 networks:
   infnet_network:
     driver: bridge

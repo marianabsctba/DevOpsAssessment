@@ -33,3 +33,39 @@ spec:
     - port: 8085
       targetPort: 8085
   type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: questao07-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: questao07-service
+  template:
+    metadata:
+      labels:
+        app: questao07-service
+    spec:
+      containers:
+        - name: questao07-service
+          image: mahbuhrer/at_devops_spring-questao07-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8087
+          env:
+            - name: EUREKA_SERVER_URI
+              value: "http://eureka-server:8761/eureka"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: questao07-service
+spec:
+  selector:
+    app: questao07-service
+  ports:
+    - port: 8087
+      targetPort: 8087
+  type: LoadBalancer
