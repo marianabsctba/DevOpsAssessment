@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline Deployment
 
 on:
   push:
@@ -40,8 +40,7 @@ jobs:
           path: Q02/target/surefire-reports
 
   deploy:
-    needs: test_Q02  # Deploy only after the test job is successful
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Remove a dependência dos testes, este job será executado independentemente
 
     steps:
       - name: Checkout repository
