@@ -1,6 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: eureka-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eureka-server
+  template:
+    metadata:
+      labels:
+        app: eureka-server
+    spec:
+      containers:
+        - name: eureka-server
+          image: at_devops_spring-eureka-server:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8761
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka-server-service
+spec:
+  selector:
+    app: eureka-server
+  ports:
+    - port: 8761
+      targetPort: 8761
+      nodePort: 31000
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: veiculo-service
 spec:
   replicas: 2
@@ -14,8 +49,7 @@ spec:
     spec:
       containers:
         - name: veiculo-service
-          image: mahbuhrer/at_devops_spring-veiculo-service:latest
-          imagePullPolicy: IfNotPresent
+          image: at_devops_spring-veiculo-service:latest
           ports:
             - containerPort: 8085
           env:
@@ -32,40 +66,5 @@ spec:
   ports:
     - port: 8085
       targetPort: 8085
-  type: LoadBalancer
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: questao07-service
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: questao07-service
-  template:
-    metadata:
-      labels:
-        app: questao07-service
-    spec:
-      containers:
-        - name: questao07-service
-          image: mahbuhrer/at_devops_spring-questao07-service:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8087
-          env:
-            - name: EUREKA_SERVER_URI
-              value: "http://eureka-server:8761/eureka"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: questao07-service
-spec:
-  selector:
-    app: questao07-service
-  ports:
-    - port: 8087
-      targetPort: 8087
+      nodePort: 31001
   type: LoadBalancer
