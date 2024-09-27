@@ -14,15 +14,14 @@ import java.util.stream.Collectors;
 public class OpenWeatherClient {
 
     private final WebClient webClient;
+    private final String apiKey = "7942af791ab5bb5a233016b03c9a9f6d";
 
     public OpenWeatherClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://api.openweathermap.org/data/2.5/").build();
     }
 
     public Mono<OpenWeatherResponse> getWeatherByCityAndDate(String city, LocalDate date) {
-        String apiKey = "7942af791ab5bb5a233016b03c9a9f6d";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = date.format(formatter);
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         return this.webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -34,15 +33,20 @@ public class OpenWeatherClient {
                 .retrieve()
                 .bodyToMono(OpenWeatherResponse.class)
                 .map(response -> filterByDate(response, formattedDate))
-                .onErrorResume(error -> Mono.error(new RuntimeException("Erro ao buscar informações meteorológicas", error)));
+                .doOnError(error -> System.err.println("Erro ao buscar informações meteorológicas: " + error.getMessage()))
+                .onErrorResume(error -> Mono.empty());
     }
 
     private OpenWeatherResponse filterByDate(OpenWeatherResponse response, String targetDate) {
-        List<OpenWeatherResponse.WeatherForecast> filteredForecasts = response.getList().stream()
-                .filter(forecast -> forecast.getDt_txt().startsWith(targetDate))
-                .collect(Collectors.toList());
+        if (response != null && response.getList() != null) {
+            List<OpenWeatherResponse.WeatherForecast> filteredForecasts = response.getList().stream()
+                    .filter(forecast -> forecast.getDt_txt().startsWith(targetDate))
+                    .collect(Collectors.toList());
 
-        response.setList(filteredForecasts);
+            response.setList(filteredForecasts);
+        } else {
+            System.err.println("Resposta inválida ou lista de previsões meteorológicas vazia.");
+        }
         return response;
     }
 }

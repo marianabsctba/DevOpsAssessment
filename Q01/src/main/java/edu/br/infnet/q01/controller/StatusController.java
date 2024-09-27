@@ -19,6 +19,6 @@ public class StatusController {
     @GetMapping
     public ResponseEntity<String> getStatus() {
         String port = environment.getProperty("local.server.port");
-       return ResponseEntity.ok("Service is up on port: " + port);
+       return ResponseEntity.ok("Serviço com status up na porta " + port);
     }
 }

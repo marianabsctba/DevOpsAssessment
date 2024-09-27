@@ -1,4 +1,4 @@
-package edu.br.infnet.hogwarts.model;
+package edu.br.infnet.q06.model;
 
 import edu.br.infnet.q06.util.Casa;
 import lombok.AllArgsConstructor;

@@ -17,30 +17,17 @@ public class OpenWeatherResponse {
         private String dt_txt;
         private Main main;
         private List<Weather> weather;
-
     }
 
+    @Setter
+    @Getter
     public static class Main {
         private Double temp;
-
-        public Double getTemp() {
-            return temp;
-        }
-
-        public void setTemp(Double temp) {
-            this.temp = temp;
-        }
     }
 
+    @Setter
+    @Getter
     public static class Weather {
         private String description;
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
     }
 }

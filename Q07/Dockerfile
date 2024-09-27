@@ -1,8 +1,7 @@
 FROM eclipse-temurin:21-jdk
 LABEL authors="mahbuhrer"
 
-VOLUME /tmp
-EXPOSE 8761
+EXPOSE 8087
 
-ADD target/EurekaServer-0.0.1-SNAPSHOT.jar EurekaServer.jar
-ENTRYPOINT ["java","-jar","/EurekaServer.jar"]
+ADD target/Q07-0.0.1-SNAPSHOT.jar Questao07.jar
+ENTRYPOINT ["java","-jar","/Questao07.jar"]

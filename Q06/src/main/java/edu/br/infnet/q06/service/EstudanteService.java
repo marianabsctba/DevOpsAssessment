@@ -1,6 +1,6 @@
 package edu.br.infnet.q06.service;
 
-import edu.br.infnet.hogwarts.model.Estudante;
+import edu.br.infnet.q06.model.Estudante;
 import edu.br.infnet.q06.repository.EstudanteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
