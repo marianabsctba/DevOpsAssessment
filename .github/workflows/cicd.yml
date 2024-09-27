@@ -5,13 +5,9 @@ on:
     branches:
       - main
       - develop
-  pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
-  build_and_test:
+  test_Q02:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,24 +28,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build and test project
-        run: mvn clean verify
+      - name: Build and test Q02
         working-directory: ./Q02
+        run: mvn clean verify
 
-      - name: Archive test results
-        if: always()
+      - name: Upload test results
+        if: success()
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: Q02/target/surefire-reports
-
-      - name: Archive build output
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-output
-          path: Q02/target/*.jar
-
-      - name: Report test results in GitHub
-        if: failure()
-        run: cat Q02/target/surefire-reports/*.txt

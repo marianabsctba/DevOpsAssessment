@@ -2,17 +2,19 @@ version: "3.8"
 services:
   eureka-server:
     build: ./EurekaServer
+    image: mahbuhrer/eureka-server:1.0  # Usando a tag 1.0 e vinculando ao seu repositório Docker Hub
     container_name: eureka-server
     ports:
-      - "8761:8761"
+      - "8762:8761"
     networks:
       - infnet_network
 
   veiculo-service:
     build: ./Q02
+    image: mahbuhrer/veiculo-service:1.0  # Usando a tag 1.0 e vinculando ao seu repositório Docker Hub
     container_name: veiculo-service
     ports:
-      - "8085:8085"
+      - "9085:8085"
     depends_on:
       - eureka-server
     environment:

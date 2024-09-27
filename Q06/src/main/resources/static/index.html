@@ -14,45 +14,52 @@
     <!-- Custom Styles -->
     <style>
         body {
-            background-image: url('https://cdn.pixabay.com/photo/2017/07/25/13/32/castle-2533641_960_720.jpg');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(to right, #4a0000, #9d0000); /* Vermelho inspirado na Grifinória */
             font-family: 'Roboto', sans-serif;
         }
 
         h1, h2 {
-            color: #ffd700; /* Dourado, cor de Hogwarts */
+            font-size: 1.8rem; /* Reduzindo o tamanho das fontes do título */
+            color: #ffd700; /* Dourado para contraste com o vermelho */
         }
 
         .container {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 50px;
+            background-color: rgba(255, 215, 0, 0.1); /* Dourado translúcido no fundo do container */
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        label {
-            color: #fff;
+        label, table, .btn {
+            font-size: 0.9rem;
+            color: #ffd700; /* Dourado para os textos */
+        }
+
+        input, select {
+            font-size: 0.9rem;
         }
 
         table {
-            color: #fff;
+            border-collapse: separate;
+            border-spacing: 0 8px;
         }
 
         thead {
-            background-color: #4a148c; /* Roxo escuro para o tema Hogwarts */
+            background-color: #8b0000; /* Vermelho escuro */
         }
 
         tbody tr {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 215, 0, 0.05); /* Fundo dourado claro para as linhas */
         }
 
         .btn {
-            background-color: #4a148c; /* Botão roxo inspirado em Hogwarts */
+            background-color: #8b0000; /* Vermelho escuro para os botões */
+            font-size: 0.9rem;
         }
 
         .btn:hover {
-            background-color: #6a1b9a; /* Efeito hover */
+            background-color: #b22222; /* Vermelho mais claro no hover */
         }
     </style>
 </head>

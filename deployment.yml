@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: eureka-server
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: eureka-server
@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: at_devops_spring-eureka-server:latest
-          imagePullPolicy: Never
+          image: mahbuhrer/at_devops_spring-eureka-server:latest  # Substituído para apontar para o Docker Hub
           ports:
             - containerPort: 8761
 ---
@@ -49,7 +48,7 @@ spec:
     spec:
       containers:
         - name: veiculo-service
-          image: at_devops_spring-veiculo-service:latest
+          image: mahbuhrer/at_devops_spring-veiculo-service:latest  # Substituído para apontar para o Docker Hub
           ports:
             - containerPort: 8085
           env:

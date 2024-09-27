@@ -14,6 +14,10 @@
         .hidden {
             display: none;
         }
+        /* Novo estilo para suavizar o vermelho */
+        .soft-red-text {
+            color: #ff9999; /* Vermelho mais claro */
+        }
     </style>
     <script>
         $(document).ready(function() {
@@ -84,8 +88,8 @@
 
     <!-- Erro ao buscar o CEP -->
     <div id="error" class="hidden">
-        <h4 class="red-text">Erro</h4>
-        <p>CEP não encontrado ou inválido.</p>
+        <h4 class="soft-red-text">Erro</h4> <!-- Cor mais suave aplicada -->
+        <p class="soft-red-text">CEP não encontrado ou inválido.</p> <!-- Cor mais suave aplicada -->
     </div>
 </div>
 </body>
