@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta CEP</title>
+    <!-- Incluindo o Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            // Função para buscar o endereço pelo CEP
+            function fetchEnderecoByCep(cep) {
+                $.ajax({
+                    url: `/api/cep/${cep}`,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#cep').text(response.cep);
+                        $('#logradouro').text(response.logradouro);
+                        $('#complemento').text(response.complemento);
+                        $('#bairro').text(response.bairro);
+                        $('#localidade').text(response.localidade);
+                        $('#uf').text(response.uf);
+                        $('#result').removeClass('hidden');
+                        $('#error').addClass('hidden');
+                    },
+                    error: function() {
+                        $('#result').addClass('hidden');
+                        $('#error').removeClass('hidden');
+                        M.toast({html: 'CEP não encontrado ou inválido!'});
+                    }
+                });
+            }
+
+            // Ao submeter o formulário de busca de CEP
+            $('#cepForm').submit(function(event) {
+                event.preventDefault();
+                const cep = $('#cepInput').val().trim();
+
+                // Validação básica do CEP
+                if (cep.length !== 8 || isNaN(cep)) {
+                    M.toast({html: 'Por favor, insira um CEP válido.'});
+                    return;
+                }
+
+                fetchEnderecoByCep(cep);
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h3 class="center-align">Consulta de Endereço por CEP</h3>
+
+    <!-- Formulário para buscar o CEP -->
+    <div class="row">
+        <form id="cepForm" class="col s12">
+            <div class="input-field">
+                <input type="text" id="cepInput" maxlength="8" required>
+                <label for="cepInput">Digite o CEP</label>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit">Consultar</button>
+        </form>
+    </div>
+
+    <!-- Resultado da consulta -->
+    <div id="result" class="hidden">
+        <h4>Resultado</h4>
+        <p><strong>CEP:</strong> <span id="cep"></span></p>
+        <p><strong>Logradouro:</strong> <span id="logradouro"></span></p>
+        <p><strong>Complemento:</strong> <span id="complemento"></span></p>
+        <p><strong>Bairro:</strong> <span id="bairro"></span></p>
+        <p><strong>Localidade:</strong> <span id="localidade"></span></p>
+        <p><strong>UF:</strong> <span id="uf"></span></p>
+    </div>
+
+    <!-- Erro ao buscar o CEP -->
+    <div id="error" class="hidden">
+        <h4 class="red-text">Erro</h4>
+        <p>CEP não encontrado ou inválido.</p>
+    </div>
+</div>
+</body>
+</html>
